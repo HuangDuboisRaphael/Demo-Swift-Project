@@ -6,14 +6,29 @@
 //
 
 import UIKit
+import Combine
 
 class HomeViewController: UIViewController {
     weak var homeCoordinator: HomeCoordinator?
+    private let homeService = CatService()
+    var cancellable = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
+        homeService.getAFact()
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error)
+                }
+            } receiveValue: { cat in
+                print(cat)
+            }.store(in: &cancellable)
         
+
         let button = UIButton(type: .system)
         button.setTitle("Press me", for: .normal)
         button.setTitleColor(.white, for: .normal)
