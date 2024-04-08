@@ -8,19 +8,25 @@
 import Foundation
 import Combine
 
-protocol CatServiceInterface: AnyObject {
-    func getAFact() -> AnyPublisher<Cat, APIErrorHandler>
+protocol HomeServiceInterface: AnyObject {
+    func getContributor() -> AnyPublisher<[ContributorResponse], APIErrorHandler>
+    func getAvatarImage(from url: String) -> AnyPublisher<Data, APIErrorHandler>
 }
 
-final class CatService: CatServiceInterface {
+final class HomeService: HomeServiceInterface {
     private let networkManager: APIRequestManagerInterface
     
     init(networkManager: APIRequestManagerInterface = APIRequestManager()) {
         self.networkManager = networkManager
     }
     
-    func getAFact() -> AnyPublisher<Cat, APIErrorHandler> {
-        let result = CatServiceProvider.getAFact.buildRequest()
-        return result.performRequest(networkManager, decodingType: Cat.self)
+    func getContributor() -> AnyPublisher<[ContributorResponse], APIErrorHandler> {
+        let result = HomeServiceProvider.getContributor.buildRequest()
+        return result.performRequest(networkManager, decodingType: [ContributorResponse].self)
+    }
+    
+    func getAvatarImage(from url: String) -> AnyPublisher<Data, APIErrorHandler> {
+        let result = HomeServiceProvider.getAvatarImage(url: url).buildRequest()
+        return result.performImageRequest(networkManager)
     }
 }

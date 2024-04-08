@@ -16,7 +16,9 @@ final class HomeCoordinator: ParentCoordinator {
     }
     
     private lazy var homeViewController: HomeViewController = {
-        let viewController = HomeViewController()
+        let service: HomeServiceInterface = HomeService()
+        let viewModel = HomeViewModel(homeService: service)
+        let viewController = HomeViewController(viewModel: viewModel)
         viewController.homeCoordinator = self
         return viewController
     }()

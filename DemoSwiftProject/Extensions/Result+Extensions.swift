@@ -19,4 +19,15 @@ extension Result<URLRequest, APIErrorHandler> {
             return publisher.eraseToAnyPublisher()
         }
     }
+    
+    func performImageRequest(_ networkManager: APIRequestManagerInterface) -> AnyPublisher<Data, APIErrorHandler> {
+        switch self {
+        case .success(let request):
+            return networkManager.performImageRequest(request)
+        case .failure(let error):
+            let publisher = PassthroughSubject<Data, APIErrorHandler>()
+            publisher.send(completion: .failure(error))
+            return publisher.eraseToAnyPublisher()
+        }
+    }
 }

@@ -7,15 +7,19 @@
 
 import Foundation
 
-enum CatServiceProvider {
-    case getAFact
+enum HomeServiceProvider {
+    case getContributor
+    case getAvatarImage(url: String)
 }
 
-extension CatServiceProvider {
+extension HomeServiceProvider {
     func buildRequest() -> Result<URLRequest, APIErrorHandler> {
         switch self {
-        case .getAFact:
-            URLRequestBuilder(with: "https://meowfacts.herokuapp.com")
+        case .getContributor:
+            URLRequestBuilder(with: Configuration.API.baseUrl)
+                .build()
+        case .getAvatarImage(let url):
+            URLRequestBuilder(with: url)
                 .build()
         }
     }

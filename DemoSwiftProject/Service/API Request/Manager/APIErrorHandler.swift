@@ -20,6 +20,7 @@ enum APIErrorHandler: Error, Equatable {
     case serverError
     case encodingError
     case decodingError
+    case mappingError
     case http(statusCode: Int)
 }
 
@@ -29,7 +30,7 @@ extension APIErrorHandler: LocalizedError {
         switch self {
         case .noConnection:
             "Check your internet connection."
-        case .badUrl, .notFound, .transportError, .requestTimeout, .encodingError, .decodingError, .serverError, .unauthorized, .tooManyRequests, .http, .badRequest:
+        case .badUrl, .notFound, .transportError, .requestTimeout, .encodingError, .decodingError, .serverError, .unauthorized, .tooManyRequests, .http, .badRequest, .mappingError:
             "Contact administrators for further help."
         }
     }

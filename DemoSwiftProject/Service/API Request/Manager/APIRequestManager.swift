@@ -11,6 +11,7 @@ import Combine
 /// Protocol to adopt for better abstraction and testability.
 protocol APIRequestManagerInterface: AnyObject {
     func performRequest<T: Decodable>(_ request: URLRequest, decodingType: T.Type) -> AnyPublisher<T, APIErrorHandler>
+    func performImageRequest(_ request: URLRequest) -> AnyPublisher<Data, APIErrorHandler>
 }
 
 /// Project Network Manager implementing a generic method to be used for all URLSession requests.
@@ -37,6 +38,22 @@ final class APIRequestManager: APIRequestManagerInterface {
             })
             .eraseToAnyPublisher()
 
+    }
+    
+    func performImageRequest(_ request: URLRequest) -> AnyPublisher<Data, APIErrorHandler> {
+        return urlSession.dataTaskPublisher(for: request)
+            .tryMap() { [weak self] element -> Data in
+                guard let self = self else { throw APIErrorHandler.badRequest }
+                try self.validateResponse(element.response)
+                return element.data
+            }
+            .mapError({ error -> APIErrorHandler in
+                if let error = error as? APIErrorHandler {
+                    return error
+                }
+                return APIErrorHandler.mappingError
+            })
+            .eraseToAnyPublisher()
     }
 }
 
